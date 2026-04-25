@@ -25,6 +25,8 @@ void mostrarDatos(struct Cliente *cli, int cant);
 
 float calcularCostoTotal(float precioUnitario, int cant);
 
+void liberarMemoria(struct Cliente *cli, int cant);
+
 int main(){
     int cant;
     float precioTotal;
@@ -35,7 +37,7 @@ int main(){
     struct Cliente *cli = (struct Cliente *)malloc(cant * sizeof(struct Cliente));
     cargarDatos(cli, cant, TiposProductos);
     mostrarDatos(cli, cant);
-
+    liberarMemoria(cli, cant);
     return 0;
 }
 
@@ -66,7 +68,7 @@ void cargarDatos(struct Cliente *cli, int cant, char *TiposProductos[]){
             //asignar memoria a tipo de producto
             indice = rand() % 5;
             letras = strlen(TiposProductos[indice]);
-            cli[i].Productos[j].TipoProducto = (char *)malloc(letras * sizeof(char));
+            cli[i].Productos[j].TipoProducto = (char *)malloc(letras + 1 * sizeof(char));
             strcpy(cli[i].Productos[j].TipoProducto, TiposProductos[indice]);
             cli[i].Productos[j].PrecioUnitario = 10 + rand() % 91;
         }
@@ -114,4 +116,17 @@ float calcularCostoTotal(float precioUnitario, int cant){
 float precioTotal;
     precioTotal = precioUnitario * cant;
 return precioTotal;
+}
+
+void liberarMemoria(struct Cliente *cli, int cant){
+    for (int i = 0; i < cant; i++)
+    {
+        for (int j = 0; j< cli[i].CantidadProductosAPedir; j++)
+        {
+            free(cli[i].Productos[j].TipoProducto);
+        }
+        free(cli[i].NombreCliente);
+        free(cli[i].Productos);
+    }
+    free(cli);
 }
